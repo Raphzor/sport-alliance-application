@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Raphael Mello · AI Systems Lead</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0a0e13;
+    --surface:  #111620;
+    --border:   #1e2636;
+    --accent:   #3b7fff;
+    --accent2:  #00c8a0;
+    --dim:      #4a5568;
+    --mid:      #8896b0;
+    --text:     #dde4f0;
+    --bright:   #f0f4ff;
+    --mono:     'DM Mono', monospace;
+    --display:  'Syne', sans-serif;
+    --body:     'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,127,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,127,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  header {
+    padding: 80px 0 64px;
+    position: relative;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp .5s .1s forwards;
+  }
+  .tag::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--accent2);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(44px, 7vw, 74px);
+    font-weight: 800;
+    line-height: 1.0;
+    color: var(--bright);
+    letter-spacing: -.02em;
+    opacity: 0;
+    animation: fadeUp .6s .2s forwards;
+  }
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-family: var(--body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--mid);
+    margin-top: 18px;
+    max-width: 560px;
+    opacity: 0;
+    animation: fadeUp .6s .35s forwards;
+  }
+
+  .contact-row {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp .6s .5s forwards;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--mid);
+    transition: border-color .2s, color .2s;
+    text-decoration: none;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* ── SECTION TITLES ── */
+  .section { padding: 60px 0; border-top: 1px solid var(--border); }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .16em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── PITCH BLOCK ── */
+  .pitch {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text);
+    max-width: 720px;
+  }
+  .pitch strong { color: var(--bright); font-weight: 500; }
+  .pitch em { color: var(--accent2); font-style: normal; }
+
+  /* ── SIGNAL CARDS ── */
+  .signals {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .card:hover::before { opacity: 1; }
+  .card-icon {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+  .card-body {
+    font-size: 13.5px;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+  .card-body strong { color: var(--text); }
+
+  /* ── TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .job {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0 28px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .5s, transform .5s;
+  }
+  .job.visible { opacity: 1; transform: none; }
+  .job:last-child { border-bottom: none; }
+
+  .job-meta {
+    padding-top: 3px;
+  }
+  .job-period {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--dim);
+    line-height: 1.5;
+  }
+  .job-company {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 5px;
+  }
+
+  .job-content {}
+  .job-title {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 10px;
+  }
+  .job-desc {
+    font-size: 13.5px;
+    color: var(--mid);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .job-desc strong { color: var(--text); }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-chip {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(59,127,255,0.08);
+    border: 1px solid rgba(59,127,255,0.2);
+    color: var(--accent);
+  }
+
+  /* ── STACK SECTION ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .stack-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .stack-group-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+  .stack-items {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--mid);
+    line-height: 1.9;
+  }
+  .stack-items span { color: var(--text); }
+
+  /* ── ATLAS CALLOUT ── */
+  .atlas-callout {
+    background: linear-gradient(135deg, rgba(59,127,255,0.07), rgba(0,200,160,0.05));
+    border: 1px solid rgba(59,127,255,0.25);
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-top: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .atlas-callout::after {
+    content: 'SPA ATLAS';
+    position: absolute;
+    right: -12px; bottom: -20px;
+    font-family: var(--display);
+    font-size: 90px;
+    font-weight: 800;
+    color: rgba(59,127,255,0.04);
+    pointer-events: none;
+    letter-spacing: -.04em;
+  }
+  .atlas-callout h3 {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 12px;
+  }
+  .atlas-callout p {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.75;
+    max-width: 640px;
+  }
+  .atlas-callout p strong { color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 16px;
+  }
+  .footer-name {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bright);
+  }
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .job { grid-template-columns: 1fr; gap: 6px 0; }
+    .job-meta { display: flex; gap: 12px; align-items: baseline; }
+    footer { flex-direction: column; }
+    .atlas-callout { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header>
+    <div class="tag">AI Systems Lead · Sport Alliance Application</div>
+    <h1>Raphael<br><span>Mello</span></h1>
+    <p class="subtitle">Agentic Engineer building production multi-agent systems — architecting the AI operating layer you're looking for.</p>
+    <div class="contact-row">
+      <a href="mailto:raphaelppmello@gmail.com" class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        raphaelppmello@gmail.com
+      </a>
+      <a href="https://linkedin.com/in/raphzor" class="pill" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/raphzor
+      </a>
+      <span class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Regensburg, Germany
+      </span>
+    </div>
+  </header>
+
+  <!-- WHY SPORT ALLIANCE -->
+  <section class="section">
+    <div class="section-label">Why this role</div>
+    <p class="pitch">
+      I've spent the last year <strong>building exactly what Sport Alliance is building</strong> — a company-wide AI operating layer that connects internal systems, enforces data governance, and enables teams to work with AI safely. At Aumovio I architected the Self Service platform that integrates Databricks with our tooling stack, defined the <em>AI usage policy</em>, built the human-in-the-loop guardrails, and shipped in 4–6 week cycles. <strong>SPA Atlas is the next-scale version of that work.</strong>
+    </p>
+  </section>
+
+  <!-- SIGNAL CARDS -->
+  <section class="section">
+    <div class="section-label">Why I fit the two non-negotiables</div>
+    <div class="signals">
+
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Claude Platform — Hands-on</div>
+        <div class="card-body">
+          Actively building with <strong>Claude SDK, tool use, MCP, and sub-agents</strong> in production. Not generic LLM experience — the specific platform you're standardising on.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">Shipped in 4–6 Week Cycles</div>
+        <div class="card-body">
+          Every agentic workflow at Aumovio goes from design to production in short sprints. I can walk you through the architecture, the guardrails, and <strong>what broke and how I fixed it</strong>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <div class="card-title">GDPR-First by Design</div>
+        <div class="card-body">
+          Turned GDPR data-handling requirements into <strong>practical AI usage policies</strong> colleagues actually follow — not a compliance deck, a working operating model.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <div class="card-title">Enterprise Rollout Experience</div>
+        <div class="card-body">
+          Led cross-functional AI enablement at Aumovio and global tool rollouts at Continental (50+ plants). I know how to get <strong>real organisations to change how they work</strong>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🗄️</div>
+        <div class="card-title">Data Platform Architecture</div>
+        <div class="card-body">
+          Designed secure, GDPR-compliant Databricks environments for AI workloads. Direct parallel to governing <strong>AI access to Salesforce, Jira, Zendesk, Slack</strong> data in SPA Atlas.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <div class="card-title">Based in Germany, DACH Context</div>
+        <div class="card-body">
+          Living and working in Germany. Familiar with the regulatory and cultural operating environment. <strong>English native, German improving actively</strong>, Spanish and Portuguese fluent.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ATLAS CALLOUT -->
+  <section class="section">
+    <div class="section-label">On SPA Atlas</div>
+    <div class="atlas-callout">
+      <h3>I've already built the smaller version of this.</h3>
+      <p>
+        At Aumovio, I architected a <strong>company-wide Self Service platform</strong> that acts as the AI operating layer over our data and tooling stack — controlling access, enforcing policy, and enabling teams to work with AI and Databricks safely. The architecture challenge is the same as SPA Atlas: <strong>you need a single control plane that connects disparate systems, applies governance rules uniformly, and is actually usable by non-engineers.</strong> I'd bring that blueprint — and what I learned breaking and fixing it — to Sport Alliance from day one.
+      </p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section">
+    <div class="section-label">Experience</div>
+    <div class="timeline">
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-period">Jan 2026<br>Present</div>
+          <div class="job-company">Aumovio</div>
+        </div>
+        <div class="job-content">
+          <div class="job-title">Agentic Engineer</div>
+          <p class="job-desc">
+            Architect and developer of the company-wide AI operating layer on AWS + Databricks. Defined the <strong>AI policy and governance model</strong>, built multi-agent workflows with human-in-the-loop guardrails, and led enablement sessions for engineering teams. Shipping production features on 4–6 week cycles.
+          </p>
+          <div class="tags">
+            <span class="tag-chip">Claude SDK</span>
+            <span class="tag-chip">MCP</span>
+            <span class="tag-chip">Sub-agents</span>
+            <span class="tag-chip">Databricks</span>
+            <span class="tag-chip">AWS</span>
+            <span class="tag-chip">GDPR policy</span>
+            <span class="tag-chip">TypeScript</span>
+            <span class="tag-chip">Python</span>
+            <span class="tag-chip">Vue</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-period">Sep 2025<br>Jan 2026</div>
+          <div class="job-company">Aumovio</div>
+        </div>
+        <div class="job-content">
+          <div class="job-title">Full Stack Developer & Architect</div>
+          <p class="job-desc">
+            Built the cloud-native data platforms and AWS infrastructure that became the foundation for the Agentic layer. Established CI/CD standards and repository architecture.
+          </p>
+          <div class="tags">
+            <span class="tag-chip">AWS CDK</span>
+            <span class="tag-chip">Vue</span>
+            <span class="tag-chip">Python</span>
+            <span class="tag-chip">Databricks</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-period">Jul 2020<br>Sep 2025</div>
+          <div class="job-company">Continental</div>
+        </div>
+        <div class="job-content">
+          <div class="job-title">Full Stack Developer & Cloud Architect</div>
+          <p class="job-desc">
+            Designed and delivered globally deployed applications for <strong>50+ manufacturing plants</strong>. Technical lead on the Gaia-X / MoveID federal scientific project — data-sovereignty architecture for cross-company data exchange. Mentored teams on clean-code and agile engineering practices.
+          </p>
+          <div class="tags">
+            <span class="tag-chip">Angular</span>
+            <span class="tag-chip">Node.js</span>
+            <span class="tag-chip">TypeScript</span>
+            <span class="tag-chip">AWS</span>
+            <span class="tag-chip">Gaia-X / MoveID</span>
+            <span class="tag-chip">CI/CD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <div class="job-period">Apr 2019<br>Jun 2020</div>
+          <div class="job-company">Continental</div>
+        </div>
+        <div class="job-content">
+          <div class="job-title">MESnet Cluster Coordinator</div>
+          <p class="job-desc">
+            Product Owner and technical lead for two global platforms across all automotive manufacturing plants. Defined tools, architecture, and pipelines while managing a global cross-functional stakeholder pipeline — strong preparation for the cross-team AI enablement mandate.
+          </p>
+          <div class="tags">
+            <span class="tag-chip">Product ownership</span>
+            <span class="tag-chip">Global rollout</span>
+            <span class="tag-chip">Architecture</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section class="section">
+    <div class="section-label">Technical Stack</div>
+    <div class="stack-grid">
+      <div class="stack-group">
+        <div class="stack-group-title">Agentic AI</div>
+        <div class="stack-items">
+          <span>Claude SDK</span><br>
+          <span>MCP</span><br>
+          <span>Sub-agents</span><br>
+          <span>Tool use</span><br>
+          <span>Human-in-the-loop</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-group-title">Cloud & Data</div>
+        <div class="stack-items">
+          <span>AWS</span> (Lambda, S3,<br>DynamoDB, EventBridge)<br>
+          <span>Databricks</span><br>
+          <span>CDK</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-group-title">Languages</div>
+        <div class="stack-items">
+          <span>TypeScript</span><br>
+          <span>Python</span><br>
+          <span>Node.js</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-group-title">Frontend</div>
+        <div class="stack-items">
+          <span>Vue / Vuetify</span><br>
+          <span>Angular / NgRx</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-group-title">Governance</div>
+        <div class="stack-items">
+          <span>GDPR policy design</span><br>
+          <span>AI Act awareness</span><br>
+          <span>Lean Six Sigma</span><br>
+          <span>Agile / Scrum</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-group-title">Languages</div>
+        <div class="stack-items">
+          <span>English</span> — native<br>
+          <span>Portuguese</span> — native<br>
+          <span>Spanish</span> — professional<br>
+          <span>German</span> — elementary
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-name">Raphael Mello</div>
+    <div class="footer-note">Prepared for Sport Alliance · AI Systems Lead · 2026</div>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll-triggered reveal for job entries
+  const jobs = document.querySelectorAll('.job');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  jobs.forEach(j => io.observe(j));
+</script>
+</body>
+</html>

@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sport Alliance Portfolio — Redesign Plan</title>
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────────────── */
+    :root {
+      --bg:        #0f172a;
+      --surface:   #1e293b;
+      --border:    #334155;
+      --indigo:    #6366f1;
+      --cyan:      #06b6d4;
+      --green:     #10b981;
+      --amber:     #f59e0b;
+      --red:       #ef4444;
+      --text:      #f1f5f9;
+      --muted:     #94a3b8;
+      --quiet:     #64748b;
+
+      --indigo-dim: rgba(99,102,241,0.12);
+      --cyan-dim:   rgba(6,182,212,0.12);
+      --green-dim:  rgba(16,185,129,0.12);
+      --amber-dim:  rgba(245,158,11,0.12);
+
+      --radius:    8px;
+      --radius-lg: 14px;
+      --nav-h:     52px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    /* ─── Top Nav ───────────────────────────────────────────────────────── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 28px; gap: 32px;
+    }
+    .topnav__brand {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--text); text-transform: uppercase;
+      white-space: nowrap; margin-right: 8px;
+    }
+    .topnav__links { display: flex; align-items: center; gap: 6px; list-style: none; margin-left: auto; }
+    .topnav__links a {
+      text-decoration: none; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px;
+      transition: background 0.15s, opacity 0.15s; opacity: 0.82;
+    }
+    .topnav__links a:hover { opacity: 1; }
+    .nav-phase1 { background: var(--indigo-dim); color: var(--indigo); }
+    .nav-phase2 { background: var(--cyan-dim);   color: var(--cyan);   }
+    .nav-phase3 { background: var(--green-dim);  color: var(--green);  }
+    .nav-phase4 { background: var(--amber-dim);  color: var(--amber);  }
+
+    /* ─── Page Layout ───────────────────────────────────────────────────── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 48px 28px 120px; }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .meta {
+      display: flex; gap: 12px; align-items: center;
+      color: var(--muted); font-size: 12px; margin-bottom: 28px;
+    }
+    .version-chip {
+      background: var(--indigo-dim); color: var(--indigo);
+      padding: 2px 10px; border-radius: 99px; font-weight: 600;
+      letter-spacing: 0.06em; font-size: 10.5px;
+    }
+
+    .blockquote-goal {
+      border-left: 3px solid var(--indigo);
+      padding: 4px 14px;
+      color: var(--text);
+      margin-bottom: 36px;
+      font-size: 14px;
+    }
+    .blockquote-goal strong { color: #e0e7ff; }
+
+    /* ─── Section Title ─────────────────────────────────────────────────── */
+    .section-title {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+      margin: 56px 0 18px;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ─── Stack Table ───────────────────────────────────────────────────── */
+    table.stack {
+      width: 100%; border-collapse: collapse;
+      font-size: 12.5px; margin-bottom: 24px;
+    }
+    table.stack th, table.stack td {
+      text-align: left; padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    table.stack th {
+      font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--quiet); font-weight: 600;
+    }
+    table.stack td { vertical-align: top; }
+    table.stack td.notes { color: var(--muted); }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 9px; border-radius: 99px;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.04em; margin-right: 6px;
+    }
+    .pill.indigo { background: var(--indigo-dim); color: var(--indigo); }
+    .pill.cyan   { background: var(--cyan-dim);   color: var(--cyan);   }
+    .pill.green  { background: var(--green-dim);  color: var(--green);  }
+    .pill.amber  { background: var(--amber-dim);  color: var(--amber);  }
+    .pill.red    { background: rgba(239,68,68,0.12); color: var(--red); }
+
+    /* ─── Phase Timeline ────────────────────────────────────────────────── */
+    .timeline {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 28px;
+    }
+    .ph-card {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 16px 16px 18px; border-top: 3px solid;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ph-card.p1 { border-color: var(--indigo); }
+    .ph-card.p2 { border-color: var(--cyan); }
+    .ph-card.p3 { border-color: var(--green); }
+    .ph-card.p4 { border-color: var(--amber); }
+    .ph-card .ph-num {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; color: var(--quiet);
+    }
+    .ph-card .ph-title { font-size: 14px; font-weight: 700; color: var(--text); }
+    .ph-card .ph-desc { color: var(--muted); font-size: 12px; line-height: 1.55; }
+
+    /* ─── File tree ─────────────────────────────────────────────────────── */
+    pre.tree {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 16px 18px; font-size: 12px; line-height: 1.7;
+      color: var(--muted); overflow-x: auto; margin-bottom: 24px;
+    }
+    pre.tree .dir { color: var(--cyan); }
+    pre.tree .file { color: var(--text); }
+    pre.tree .new { color: var(--green); }
+
+    /* ─── Phase Banner ──────────────────────────────────────────────────── */
+    .phase-banner {
+      position: relative;
+      padding: 22px 26px;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      margin: 56px 0 28px;
+      overflow: hidden;
+    }
+    .phase-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: var(--radius-lg);
+      padding: 1px;
+      background: linear-gradient(135deg, var(--phase-color), transparent 70%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+    }
+    .phase-banner.p1 { --phase-color: var(--indigo); }
+    .phase-banner.p2 { --phase-color: var(--cyan); }
+    .phase-banner.p3 { --phase-color: var(--green); }
+    .phase-banner.p4 { --phase-color: var(--amber); }
+
+    .phase-banner .eyebrow {
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .phase-banner.p1 .eyebrow { color: var(--indigo); }
+    .phase-banner.p2 .eyebrow { color: var(--cyan); }
+    .phase-banner.p3 .eyebrow { color: var(--green); }
+    .phase-banner.p4 .eyebrow { color: var(--amber); }
+
+    .phase-banner h2 {
+      font-size: 22px; font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px; color: var(--text);
+    }
+    .phase-banner p { color: var(--muted); font-size: 13px; max-width: 720px; }
+
+    /* ─── Tasks ─────────────────────────────────────────────────────────── */
+    .task {
+      background: var(--surface); border-radius: var(--radius);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .task summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 14px;
+      font-size: 14px; font-weight: 600;
+      color: var(--text);
+      user-select: none;
+    }
+    .task summary::-webkit-details-marker { display: none; }
+    .task summary::after {
+      content: '+'; margin-left: auto;
+      color: var(--quiet); font-size: 18px;
+    }
+    .task[open] summary::after { content: '−'; }
+    .task[open] summary { border-bottom: 1px solid var(--border); }
+
+    .num-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .num-chip.p1 { background: var(--indigo-dim); color: var(--indigo); }
+    .num-chip.p2 { background: var(--cyan-dim);   color: var(--cyan); }
+    .num-chip.p3 { background: var(--green-dim);  color: var(--green); }
+    .num-chip.p4 { background: var(--amber-dim);  color: var(--amber); }
+
+    .task-body { padding: 16px 22px 22px; }
+
+    .files {
+      background: rgba(6,182,212,0.05);
+      border-left: 2px solid var(--cyan);
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+    .files .header {
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 6px; font-weight: 700;
+    }
+    .files .row { color: var(--muted); }
+    .files .row .add { color: var(--green); }
+    .files .row .mod { color: var(--amber); }
+
+    .step {
+      display: flex; gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+    }
+    .step input[type="checkbox"] {
+      margin-top: 4px;
+      width: 14px; height: 14px;
+      accent-color: var(--indigo);
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; }
+    .step-label { font-weight: 600; color: var(--text); margin-bottom: 4px; font-size: 13px; }
+    .step-content p { color: var(--muted); font-size: 13px; }
+
+    .lang-label {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--quiet); margin: 10px 0 4px; font-weight: 700;
+    }
+
+    pre.code {
+      background: #0a0f1c;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    pre.code .c { color: var(--quiet); font-style: italic; }
+    pre.code .k { color: #c084fc; }
+    pre.code .s { color: #86efac; }
+    pre.code .v { color: #7dd3fc; }
+    pre.code .n { color: #fbbf24; }
+
+    .expected {
+      color: var(--green);
+      font-size: 12px;
+      background: var(--green-dim);
+      border-radius: 4px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    /* ─── Callouts ──────────────────────────────────────────────────────── */
+    .callout {
+      border-left: 3px solid;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+    .callout-info  { background: var(--cyan-dim); border-color: var(--cyan); }
+    .callout-warn  { background: var(--amber-dim); border-color: var(--amber); }
+    .callout-tip   { background: var(--green-dim); border-color: var(--green); }
+    .callout-danger{ background: rgba(239,68,68,0.10); border-color: var(--red); }
+    .callout strong { color: var(--text); }
+
+    /* ─── Mockup frames ─────────────────────────────────────────────────── */
+    .mockups {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin: 8px 0 16px;
+    }
+    .mock {
+      background: #f6f3ec; color: #1a1a1a;
+      border-radius: 10px;
+      padding: 18px 16px;
+      font-family: 'Times New Roman', Georgia, serif;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .mock .lead { font-size: 11px; line-height: 1.3; font-weight: 700; }
+    .mock .small { font-size: 8.5px; color: #555; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .mock .name  { font-size: 8px; color: #888; margin-top: 12px; }
+    .mock.dark  { background: #1a1612; color: #f4f1ea; }
+    .mock.dark .small { color: #a89a86; }
+    .mock.dark .name  { color: #6b6258; }
+
+    .df-flow {
+      display: flex; gap: 12px; align-items: stretch;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+    .df-step {
+      background: var(--surface); border-radius: 8px;
+      padding: 10px 14px; flex: 1 1 180px;
+      border: 1px solid var(--border);
+      min-width: 0;
+    }
+    .df-step .lab {
+      font-size: 9.5px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--cyan);
+      font-weight: 700; margin-bottom: 4px;
+    }
+    .df-step .body { font-size: 12px; color: var(--muted); }
+    .df-arrow {
+      align-self: center; color: var(--quiet); font-size: 18px;
+    }
+
+    @media (max-width: 800px) {
+      .timeline { grid-template-columns: repeat(2, 1fr); }
+      .mockups  { grid-template-columns: 1fr; }
+      .df-flow  { flex-direction: column; }
+      .df-arrow { transform: rotate(90deg); }
+    }
+    @media (max-width: 500px) {
+      .timeline { grid-template-columns: 1fr; }
+      .topnav { padding: 0 16px; gap: 12px; }
+      .topnav__links { gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── TOP NAV ─────────────────────────────────────────────────────── -->
+<nav class="topnav">
+  <div class="topnav__brand">SPA · Portfolio Redesign</div>
+  <ul class="topnav__links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#phase-1" class="nav-phase1">P1 · Strip</a></li>
+    <li><a href="#phase-2" class="nav-phase2">P2 · System</a></li>
+    <li><a href="#phase-3" class="nav-phase3">P3 · Hero</a></li>
+    <li><a href="#phase-4" class="nav-phase4">P4 · Body</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+  <!-- ─── OVERVIEW ───────────────────────────────────────────────────── -->
+  <section id="overview">
+    <h1>Sport Alliance Portfolio — Redesign Plan</h1>
+    <div class="meta">
+      <span>2026-05-28</span>
+      <span class="version-chip">v1</span>
+      <span>· Single-file static page · One-time use for application</span>
+    </div>
+
+    <div class="blockquote-goal">
+      <strong>Goal.</strong> Rebuild <code style="color:#7dd3fc">raphael_mello_sportalliance.html</code>
+      so it does not look AI-generated. The current page hits every 2024–25 AI-design fingerprint:
+      dark mode + cyan/blue glow, monospace tags, identical card grids, emoji icons, gradient hovers,
+      grid noise overlay, watermark text. For an <strong>AI Systems Lead</strong> role, that surface
+      reads as "I had Claude build my portfolio" — which is the one impression to avoid.
+      We pivot to a <strong>light editorial / Swiss-magazine</strong> direction: confident typography,
+      generous whitespace, asymmetric layout, restrained palette, zero glow.
+    </div>
+
+    <div class="section-title">Stack</div>
+    <table class="stack">
+      <thead>
+        <tr><th style="width:18%">Layer</th><th style="width:32%">Technology</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Document</td>
+          <td><span class="pill indigo">HTML</span><span class="pill indigo">CSS</span><span class="pill indigo">vanilla JS</span></td>
+          <td class="notes">Single self-contained file. No build step. Hosted statically or sent as attachment.</td>
+        </tr>
+        <tr>
+          <td>Typography</td>
+          <td><span class="pill cyan">GT Sectra</span> <span class="pill cyan">or</span> <span class="pill cyan">Fraunces</span> <span class="pill cyan">+</span> <span class="pill cyan">ABC Diatype</span> <span class="pill cyan">or</span> <span class="pill cyan">Inter Tight</span></td>
+          <td class="notes">Editorial serif display + clean sans body. Both available on Google Fonts (Fraunces + Inter Tight) for zero-cost.</td>
+        </tr>
+        <tr>
+          <td>Palette</td>
+          <td><span class="pill amber">paper #f4f1ea</span><span class="pill" style="background:#1a1612;color:#f4f1ea">ink #15110d</span><span class="pill red">accent #c0392b</span></td>
+          <td class="notes">Warm off-white paper, near-black ink, single oxblood accent used sparingly. No blue, no teal, no gradients.</td>
+        </tr>
+        <tr>
+          <td>Layout</td>
+          <td><span class="pill green">CSS Grid</span><span class="pill green">12-col</span><span class="pill green">asymmetric</span></td>
+          <td class="notes">Editorial grid. Content lives in unequal columns. Break the grid at the hero and the Atlas pull-quote.</td>
+        </tr>
+        <tr>
+          <td>Motion</td>
+          <td><span class="pill amber">none / minimal</span></td>
+          <td class="notes">Drop the fadeUp animations. A confident, static page is more senior than an animated one.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Phases</div>
+    <div class="timeline">
+      <div class="ph-card p1">
+        <span class="ph-num">PHASE 1</span>
+        <span class="ph-title">Strip the AI tells</span>
+        <span class="ph-desc">Delete grid overlay, gradients, emoji icons, monospace labels, dark theme, watermark, hover translateY.</span>
+      </div>
+      <div class="ph-card p2">
+        <span class="ph-num">PHASE 2</span>
+        <span class="ph-title">Establish system</span>
+        <span class="ph-desc">New tokens, fonts (Fraunces + Inter Tight), light palette, type scale, asymmetric grid.</span>
+      </div>
+      <div class="ph-card p3">
+        <span class="ph-num">PHASE 3</span>
+        <span class="ph-title">Rebuild the hero</span>
+        <span class="ph-desc">Lead with the claim, not the name. One headline that earns the meeting. Add CTA.</span>
+      </div>
+      <div class="ph-card p4">
+        <span class="ph-num">PHASE 4</span>
+        <span class="ph-title">Body, Atlas, timeline</span>
+        <span class="ph-desc">Asymmetric "fit" section, editorial Atlas pull-quote, restrained timeline, fix duplicated "Languages".</span>
+      </div>
+    </div>
+
+    <div class="section-title">File structure</div>
+    <pre class="tree">
+<span class="dir">sport-alliance-application/</span>
+├── <span class="file">raphael_mello_sportalliance.html</span>   <span style="color:var(--amber)">~ rebuilt in place</span>
+└── <span class="dir">docs/</span>
+    └── <span class="dir">plans/</span>
+        └── <span class="new">2026-05-28-portfolio-redesign.html</span>  <span style="color:var(--green)">+ this plan</span>
+    </pre>
+
+    <div class="callout callout-warn">
+      <strong>Constraint.</strong> Single HTML file, hosted statically. All fonts via Google Fonts CDN.
+      No images on the page (no profile photo, no logos) — typography does the work.
+      Total file budget: keep under 30 KB unminified.
+    </div>
+
+    <div class="section-title">Visual direction (mockup)</div>
+    <p style="color:var(--muted); font-size:12.5px; margin-bottom: 12px;">Three rough vignettes to lock direction before edits. The middle one (light editorial) is the recommendation.</p>
+    <div class="mockups">
+      <div class="mock dark">
+        <div class="small">CURRENT</div>
+        <div class="lead" style="font-family: 'Inter', sans-serif; color:#3b7fff; font-weight:800;">RAPHAEL<br>MELLO</div>
+        <div class="name">▍ AI Systems Lead<br>▍ ⚡ 🚀 🔒 🏭 🗄️ 🌍<br>▍ — — generic AI dashboard — —</div>
+      </div>
+      <div class="mock">
+        <div class="small">RECOMMENDED · LIGHT EDITORIAL</div>
+        <div class="lead" style="font-size:13px; line-height:1.15;">I've already built<br>what Sport Alliance<br>is building.</div>
+        <div style="font-size:9px; color:#555; margin-top:10px; max-width:90%;">A note from <em>Raphael Mello</em>, regarding the AI Systems Lead position — May 2026.</div>
+        <div class="name" style="margin-top: 28px; border-top: 1px solid #ccc; padding-top: 6px;">№ 01 · Regensburg</div>
+      </div>
+      <div class="mock dark" style="background:#15110d; color:#f4f1ea;">
+        <div class="small">ALT · DARK EDITORIAL</div>
+        <div class="lead" style="font-size:13px; line-height:1.15; color:#f4f1ea;">An AI operating<br>layer, shipped.</div>
+        <div style="font-size:9px; color:#a89a86; margin-top:10px;">Raphael Mello · for Sport Alliance · 2026</div>
+        <div class="name" style="margin-top: 28px; color: #c0392b;">— Read the case →</div>
+      </div>
+    </div>
+
+    <div class="section-title">Information flow</div>
+    <div class="df-flow">
+      <div class="df-step">
+        <div class="lab">01 · Hook</div>
+        <div class="body">One sentence claim. Sets the meeting's frame.</div>
+      </div>
+      <div class="df-arrow">→</div>
+      <div class="df-step">
+        <div class="lab">02 · Proof</div>
+        <div class="body">Concrete fit — Claude SDK, MCP, GDPR, scale at Continental.</div>
+      </div>
+      <div class="df-arrow">→</div>
+      <div class="df-step">
+        <div class="lab">03 · Pull-quote</div>
+        <div class="body">"I've built the smaller version of Atlas." Editorial pull-quote, not a card.</div>
+      </div>
+      <div class="df-arrow">→</div>
+      <div class="df-step">
+        <div class="lab">04 · Track record</div>
+        <div class="body">Restrained timeline, 4 entries, no chips noise.</div>
+      </div>
+      <div class="df-arrow">→</div>
+      <div class="df-step">
+        <div class="lab">05 · Close</div>
+        <div class="body">Stack + a clear "let's talk" mailto CTA.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PHASE 1 — STRIP THE AI TELLS
+       ═════════════════════════════════════════════════════════════════ -->
+  <div id="phase-1" class="phase-banner p1">
+    <div class="eyebrow">Phase 1 · Indigo</div>
+    <h2>Strip the AI tells</h2>
+    <p>Before adding anything new, delete every fingerprint of the current visual system. This is destructive: do it as a single commit so the diff is unambiguous. The page will look ugly afterward — that's correct.</p>
+  </div>
+
+  <!-- TASK 1.1 -->
+  <details class="task" open>
+    <summary><span class="num-chip p1">1.1</span> Back up the current file and create the working copy</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="add">+ created</span> raphael_mello_sportalliance.<strong>v0.html</strong> &nbsp;<span style="color:var(--quiet)">(snapshot of current page)</span></div>
+        <div class="row"><span class="mod">~ modified</span> raphael_mello_sportalliance.html &nbsp;<span style="color:var(--quiet)">(working file — edits land here)</span></div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.1.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Snapshot the current page</div>
+          <p>From the project root, copy the file so you can compare against it later.</p>
+          <div class="lang-label">bash</div>
+<pre class="code">cp raphael_mello_sportalliance.html raphael_mello_sportalliance.v0.html</pre>
+          <p class="expected">No output. Verify with <code style="color:#7dd3fc">ls raphael_mello_sportalliance.*</code> — both files present.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.1.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Open the working copy in a browser</div>
+          <p>Open <code style="color:#7dd3fc">raphael_mello_sportalliance.html</code> in a browser tab and keep it open throughout. Reload after each step to verify visually.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 1.2 -->
+  <details class="task" open>
+    <summary><span class="num-chip p1">1.2</span> Delete the grid-noise overlay and animation keyframes</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> raphael_mello_sportalliance.html (lines 38–48, 350–353, plus all <code>animation:</code> rules)</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.2.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Remove the <code>body::before</code> grid-noise rule</div>
+          <p>Find the rule that paints the cyan crosshatch overlay. Delete the entire block.</p>
+          <div class="lang-label">css — DELETE</div>
+<pre class="code"><span class="c">/* ── GRID NOISE OVERLAY ── */</span>
+<span class="k">body::before</span> {
+  <span class="v">content</span>: <span class="s">''</span>;
+  <span class="v">position</span>: <span class="s">fixed</span>;
+  <span class="v">inset</span>: <span class="n">0</span>;
+  <span class="v">background-image</span>:
+    <span class="s">linear-gradient(rgba(59,127,255,0.03) 1px, transparent 1px)</span>,
+    <span class="s">linear-gradient(90deg, rgba(59,127,255,0.03) 1px, transparent 1px)</span>;
+  <span class="v">background-size</span>: <span class="n">48px 48px</span>;
+  <span class="v">pointer-events</span>: <span class="s">none</span>;
+  <span class="v">z-index</span>: <span class="n">0</span>;
+}</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.2.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Remove the <code>fadeUp</code> keyframes and every <code>animation:</code> declaration that references it</div>
+          <p>Search for <code style="color:#7dd3fc">animation: fadeUp</code> and remove that line from <code>.tag</code>, <code>h1</code>, <code>.subtitle</code>, <code>.contact-row</code>. Then delete the keyframes block.</p>
+          <div class="lang-label">css — DELETE</div>
+<pre class="code"><span class="k">@keyframes fadeUp</span> {
+  <span class="v">from</span> { <span class="v">opacity</span>: <span class="n">0</span>; <span class="v">transform</span>: <span class="s">translateY(16px)</span>; }
+  <span class="v">to</span>   { <span class="v">opacity</span>: <span class="n">1</span>; <span class="v">transform</span>: <span class="s">none</span>; }
+}</pre>
+          <p>Also delete every <code>opacity: 0;</code> and <code>animation: fadeUp ...;</code> pair in <code>.tag</code>, <code>h1</code>, <code>.subtitle</code>, <code>.contact-row</code>. Without animation, those starting <code>opacity: 0</code> rules would hide content forever.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.2.3" />
+        <div class="step-content">
+          <div class="step-label">Step 3 · Remove the IntersectionObserver script</div>
+          <p>The reveal-on-scroll for <code>.job</code> entries also goes. Delete the entire <code>&lt;script&gt;</code> block at the bottom.</p>
+          <div class="lang-label">html — DELETE</div>
+<pre class="code"><span class="c">// Scroll-triggered reveal for job entries</span>
+<span class="k">const</span> jobs = document.querySelectorAll(<span class="s">'.job'</span>);
+<span class="k">const</span> io = <span class="k">new</span> IntersectionObserver(...);
+jobs.forEach(j =&gt; io.observe(j));</pre>
+          <p>Also remove the matching <code>opacity: 0; transform: translateY(12px);</code> on <code>.job</code> and the <code>.job.visible</code> rule. Otherwise jobs will never appear.</p>
+          <p class="expected">After saving + reloading, the page is uglier and static, but every text element is visible without scroll-triggers. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 1.3 -->
+  <details class="task" open>
+    <summary><span class="num-chip p1">1.3</span> Remove emoji icons and the gradient/translateY card hover</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> raphael_mello_sportalliance.html — all <code>.card-icon</code> spans and <code>.card::before</code> rule</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.3.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Delete every <code>&lt;div class="card-icon"&gt;</code> emoji block</div>
+          <p>Six occurrences: ⚡ 🚀 🔒 🏭 🗄️ 🌍. Remove the divs entirely. We'll re-style the cards in Phase 4 without icons.</p>
+          <div class="lang-label">html — DELETE (× 6)</div>
+<pre class="code"><span class="k">&lt;div</span> class=<span class="s">"card-icon"</span><span class="k">&gt;</span>⚡<span class="k">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.3.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Remove the gradient top-border and translateY hover</div>
+          <div class="lang-label">css — DELETE</div>
+<pre class="code"><span class="k">.card:hover</span> { <span class="v">border-color</span>: <span class="s">var(--accent)</span>; <span class="v">transform</span>: <span class="s">translateY(-2px)</span>; }
+<span class="k">.card::before</span> {
+  <span class="v">content</span>: <span class="s">''</span>;
+  <span class="v">position</span>: <span class="s">absolute</span>;
+  <span class="v">top</span>: <span class="n">0</span>; <span class="v">left</span>: <span class="n">0</span>; <span class="v">right</span>: <span class="n">0</span>;
+  <span class="v">height</span>: <span class="n">2px</span>;
+  <span class="v">background</span>: <span class="s">linear-gradient(90deg, var(--accent), var(--accent2))</span>;
+  <span class="v">opacity</span>: <span class="n">0</span>;
+  <span class="v">transition</span>: <span class="s">opacity .25s</span>;
+}
+<span class="k">.card:hover::before</span> { <span class="v">opacity</span>: <span class="n">1</span>; }</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.3.3" />
+        <div class="step-content">
+          <div class="step-label">Step 3 · Remove the SPA ATLAS watermark</div>
+          <p>The big low-opacity letters in the Atlas callout are a 2022 cliché.</p>
+          <div class="lang-label">css — DELETE</div>
+<pre class="code"><span class="k">.atlas-callout::after</span> {
+  <span class="v">content</span>: <span class="s">'SPA ATLAS'</span>;
+  <span class="c">/* ...all properties... */</span>
+}</pre>
+          <p class="expected">Reload. Cards are flat and quiet. The Atlas box has no watermark. The page reads as a draft now — that's the right state to enter Phase 2. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 1.4 -->
+  <details class="task" open>
+    <summary><span class="num-chip p1">1.4</span> Remove the dark theme tokens (don't replace them yet)</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> <code>:root</code> custom properties + <code>body</code> background</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.4.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Empty the design tokens block</div>
+          <p>We're not deleting <code>:root</code> — just clearing the values so the page goes plain-text. Phase 2 fills it in.</p>
+          <div class="lang-label">css — REPLACE</div>
+<pre class="code"><span class="k">:root</span> {
+  <span class="c">/* tokens reset — Phase 2 fills these in */</span>
+}
+
+<span class="k">body</span> {
+  <span class="v">background</span>: <span class="s">white</span>;
+  <span class="v">color</span>: <span class="s">black</span>;
+  <span class="v">font-family</span>: <span class="s">serif</span>;
+  <span class="v">font-size</span>: <span class="n">16px</span>;
+  <span class="v">line-height</span>: <span class="n">1.5</span>;
+}</pre>
+          <p class="expected">Reload. Page is white-on-black serif, every block aligned to the wrap container, no visual styling. <strong>This is the floor</strong> — Phase 2 builds back up from here. ✓</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="1.4.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Commit Phase 1</div>
+          <div class="lang-label">bash</div>
+<pre class="code">git add raphael_mello_sportalliance.html raphael_mello_sportalliance.v0.html
+git commit -m <span class="s">"strip AI-design tells from portfolio (phase 1)"</span></pre>
+          <p>If this directory isn't a git repo, init one first: <code style="color:#7dd3fc">git init &amp;&amp; git add . &amp;&amp; git commit -m "baseline"</code> before this step.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PHASE 2 — DESIGN SYSTEM
+       ═════════════════════════════════════════════════════════════════ -->
+  <div id="phase-2" class="phase-banner p2">
+    <div class="eyebrow">Phase 2 · Cyan</div>
+    <h2>Establish the new system</h2>
+    <p>Light editorial direction: warm paper, ink black, one oxblood accent. Fraunces (display serif) + Inter Tight (body sans). Asymmetric 12-column grid. No glow, no gradient, no card hovers.</p>
+  </div>
+
+  <!-- TASK 2.1 -->
+  <details class="task" open>
+    <summary><span class="num-chip p2">2.1</span> Swap the Google Fonts link and define new tokens</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> <code>&lt;head&gt;</code> link tag, <code>:root</code></div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.1.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Replace the Google Fonts <code>&lt;link&gt;</code></div>
+          <div class="lang-label">html — REPLACE the existing link tag in &lt;head&gt;</div>
+<pre class="code"><span class="k">&lt;link</span> rel=<span class="s">"preconnect"</span> href=<span class="s">"https://fonts.googleapis.com"</span><span class="k">&gt;</span>
+<span class="k">&lt;link</span> rel=<span class="s">"preconnect"</span> href=<span class="s">"https://fonts.gstatic.com"</span> crossorigin<span class="k">&gt;</span>
+<span class="k">&lt;link</span> href=<span class="s">"https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..800,0..100&amp;family=Inter+Tight:wght@300;400;500;600&amp;display=swap"</span> rel=<span class="s">"stylesheet"</span><span class="k">&gt;</span></pre>
+          <p>Fraunces is a contemporary editorial serif with optical-size axes — it shines at headline sizes and stays legible at body. Inter Tight is the same family the design world has standardised on without the AI baggage of regular Inter (it's tighter, slightly more editorial).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.1.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Define the design tokens</div>
+          <div class="lang-label">css — REPLACE the empty <code>:root</code> block</div>
+<pre class="code"><span class="k">:root</span> {
+  <span class="c">/* paper + ink */</span>
+  <span class="v">--paper</span>: <span class="s">#f4f1ea</span>;       <span class="c">/* warm off-white */</span>
+  <span class="v">--paper-2</span>: <span class="s">#ebe6da</span>;     <span class="c">/* slightly deeper for sections */</span>
+  <span class="v">--ink</span>: <span class="s">#15110d</span>;         <span class="c">/* near-black, warm */</span>
+  <span class="v">--ink-2</span>: <span class="s">#3d362e</span>;       <span class="c">/* secondary text */</span>
+  <span class="v">--ink-3</span>: <span class="s">#7a6f60</span>;       <span class="c">/* tertiary, captions */</span>
+  <span class="v">--rule</span>: <span class="s">#cfc7b5</span>;        <span class="c">/* hairline rules */</span>
+
+  <span class="c">/* single accent */</span>
+  <span class="v">--accent</span>: <span class="s">#a02b1f</span>;      <span class="c">/* deep oxblood — used sparingly */</span>
+
+  <span class="c">/* type stack */</span>
+  <span class="v">--display</span>: <span class="s">'Fraunces', Georgia, 'Times New Roman', serif</span>;
+  <span class="v">--body</span>:    <span class="s">'Inter Tight', system-ui, -apple-system, sans-serif</span>;
+
+  <span class="c">/* fluid scale */</span>
+  <span class="v">--fs-eyebrow</span>: <span class="s">0.72rem</span>;
+  <span class="v">--fs-body</span>:    <span class="s">1.0625rem</span>;       <span class="c">/* 17px — generous reading */</span>
+  <span class="v">--fs-pull</span>:    <span class="s">clamp(1.4rem, 2.6vw, 2rem)</span>;
+  <span class="v">--fs-h2</span>:      <span class="s">clamp(1.6rem, 3.2vw, 2.4rem)</span>;
+  <span class="v">--fs-hero</span>:    <span class="s">clamp(2.4rem, 7vw, 5.4rem)</span>;
+}
+
+<span class="k">html</span> { <span class="v">scroll-behavior</span>: <span class="s">smooth</span>; }
+
+<span class="k">body</span> {
+  <span class="v">background</span>: <span class="s">var(--paper)</span>;
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">font-family</span>: <span class="s">var(--body)</span>;
+  <span class="v">font-size</span>: <span class="s">var(--fs-body)</span>;
+  <span class="v">font-weight</span>: <span class="n">400</span>;
+  <span class="v">line-height</span>: <span class="n">1.55</span>;
+  <span class="v">-webkit-font-smoothing</span>: <span class="s">antialiased</span>;
+}</pre>
+          <p class="expected">Reload. The page is now warm paper with near-black sans-serif body text. No more cyan, no more dark mode. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 2.2 -->
+  <details class="task" open>
+    <summary><span class="num-chip p2">2.2</span> Asymmetric 12-column grid + section title primitive</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> <code>.wrap</code> → editorial container; replace <code>.section-label</code> styling</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.2.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Define the editorial container and grid</div>
+          <div class="lang-label">css — REPLACE <code>.wrap</code> and add new helpers</div>
+<pre class="code"><span class="k">.wrap</span> {
+  <span class="v">max-width</span>: <span class="n">1080px</span>;
+  <span class="v">margin</span>: <span class="s">0 auto</span>;
+  <span class="v">padding</span>: <span class="n">0 32px</span>;
+}
+
+<span class="k">.grid-12</span> {
+  <span class="v">display</span>: <span class="s">grid</span>;
+  <span class="v">grid-template-columns</span>: <span class="s">repeat(12, 1fr)</span>;
+  <span class="v">column-gap</span>: <span class="n">28px</span>;
+  <span class="v">row-gap</span>: <span class="n">0</span>;
+}
+
+<span class="c">/* asymmetric column helpers */</span>
+<span class="k">.col-3</span>  { <span class="v">grid-column</span>: <span class="s">span 3</span>; }
+<span class="k">.col-4</span>  { <span class="v">grid-column</span>: <span class="s">span 4</span>; }
+<span class="k">.col-5</span>  { <span class="v">grid-column</span>: <span class="s">span 5</span>; }
+<span class="k">.col-7</span>  { <span class="v">grid-column</span>: <span class="s">span 7</span>; }
+<span class="k">.col-8</span>  { <span class="v">grid-column</span>: <span class="s">span 8</span>; }
+<span class="k">.col-9</span>  { <span class="v">grid-column</span>: <span class="s">span 9</span>; }
+<span class="k">.col-12</span> { <span class="v">grid-column</span>: <span class="s">span 12</span>; }
+
+<span class="k">@media (max-width: 720px)</span> {
+  <span class="k">.col-3, .col-4, .col-5, .col-7, .col-8, .col-9</span> { <span class="v">grid-column</span>: <span class="s">span 12</span>; }
+}
+
+<span class="c">/* sections */</span>
+<span class="k">.section</span> {
+  <span class="v">padding</span>: <span class="n">72px 0</span>;
+  <span class="v">border-top</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+}
+<span class="k">.section:first-of-type</span> { <span class="v">border-top</span>: <span class="s">none</span>; }
+
+<span class="k">.eyebrow</span> {
+  <span class="v">font-family</span>: <span class="s">var(--body)</span>;
+  <span class="v">font-size</span>: <span class="s">var(--fs-eyebrow)</span>;
+  <span class="v">font-weight</span>: <span class="n">500</span>;
+  <span class="v">letter-spacing</span>: <span class="n">0.18em</span>;
+  <span class="v">text-transform</span>: <span class="s">uppercase</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-3)</span>;
+  <span class="v">margin-bottom</span>: <span class="n">14px</span>;
+}</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.2.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Define the typography primitives</div>
+          <div class="lang-label">css — APPEND</div>
+<pre class="code"><span class="k">h1, h2, h3</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-weight</span>: <span class="n">400</span>;            <span class="c">/* Fraunces shines at 400, not 800 */</span>
+  <span class="v">letter-spacing</span>: <span class="n">-0.018em</span>;
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">font-variation-settings</span>: <span class="s">"opsz" 144, "SOFT" 30</span>;
+}
+<span class="k">h1</span> { <span class="v">font-size</span>: <span class="s">var(--fs-hero)</span>;  <span class="v">line-height</span>: <span class="n">0.95</span>; }
+<span class="k">h2</span> { <span class="v">font-size</span>: <span class="s">var(--fs-h2)</span>;    <span class="v">line-height</span>: <span class="n">1.05</span>; }
+<span class="k">h3</span> { <span class="v">font-size</span>: <span class="n">1.25rem</span>;        <span class="v">line-height</span>: <span class="n">1.25</span>; }
+
+<span class="k">p</span> { <span class="v">font-size</span>: <span class="s">var(--fs-body)</span>; <span class="v">max-width</span>: <span class="n">62ch</span>; }
+<span class="k">p + p</span> { <span class="v">margin-top</span>: <span class="n">1em</span>; }
+
+<span class="k">a</span> {
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">text-decoration</span>: <span class="s">underline</span>;
+  <span class="v">text-decoration-thickness</span>: <span class="n">1px</span>;
+  <span class="v">text-underline-offset</span>: <span class="n">3px</span>;
+  <span class="v">transition</span>: <span class="s">color .15s</span>;
+}
+<span class="k">a:hover</span> { <span class="v">color</span>: <span class="s">var(--accent)</span>; }</pre>
+          <p class="expected">Reload. Headings are now Fraunces serif at light weight, body is Inter Tight, links are underlined ink that turn oxblood on hover. The page already feels editorial. ✓</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.2.3" />
+        <div class="step-content">
+          <div class="step-label">Step 3 · Replace the existing <code>.section-label</code> usages with <code>.eyebrow</code></div>
+          <p>In the markup, find every <code>&lt;div class="section-label"&gt;...&lt;/div&gt;</code> and rename the class to <code>eyebrow</code>. Delete the old <code>.section-label</code> CSS block (the one with the trailing 1px line).</p>
+          <p>Result: section titles are tight uppercase eyebrows in muted ink, with no decorative trailing rule.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="2.2.4" />
+        <div class="step-content">
+          <div class="step-label">Step 4 · Commit Phase 2 system</div>
+          <div class="lang-label">bash</div>
+<pre class="code">git add raphael_mello_sportalliance.html
+git commit -m <span class="s">"establish editorial design system (phase 2)"</span></pre>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PHASE 3 — HERO
+       ═════════════════════════════════════════════════════════════════ -->
+  <div id="phase-3" class="phase-banner p3">
+    <div class="eyebrow">Phase 3 · Green</div>
+    <h2>Rebuild the hero — claim first, name second</h2>
+    <p>The current hero is a name tag. The new hero is a single headline that earns the meeting. Layout: 12-col asymmetric. Left: a small dateline + the claim. Right: a short standfirst + contact line. No pills, no emoji, no decorative tag chips.</p>
+  </div>
+
+  <!-- TASK 3.1 -->
+  <details class="task" open>
+    <summary><span class="num-chip p3">3.1</span> Rewrite the hero markup</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> the entire <code>&lt;header&gt;</code> block</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="3.1.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Replace the hero markup</div>
+          <div class="lang-label">html — REPLACE the entire &lt;header&gt;</div>
+<pre class="code"><span class="k">&lt;header</span> class=<span class="s">"section hero"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"grid-12"</span><span class="k">&gt;</span>
+
+    <span class="k">&lt;div</span> class=<span class="s">"col-3 hero-meta"</span><span class="k">&gt;</span>
+      <span class="k">&lt;div</span> class=<span class="s">"eyebrow"</span><span class="k">&gt;</span>№ 01<span class="k">&lt;/div&gt;</span>
+      <span class="k">&lt;p</span> class=<span class="s">"dateline"</span><span class="k">&gt;</span>
+        A note prepared for<span class="k">&lt;br&gt;</span>
+        <span class="k">&lt;strong&gt;</span>Sport Alliance<span class="k">&lt;/strong&gt;</span>,<span class="k">&lt;br&gt;</span>
+        regarding the<span class="k">&lt;br&gt;</span>
+        <span class="k">&lt;em&gt;</span>AI Systems Lead<span class="k">&lt;/em&gt;</span> position.
+      <span class="k">&lt;/p&gt;</span>
+      <span class="k">&lt;p</span> class=<span class="s">"dateline subdued"</span><span class="k">&gt;</span>Regensburg, May 2026.<span class="k">&lt;/p&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+
+    <span class="k">&lt;div</span> class=<span class="s">"col-9 hero-claim"</span><span class="k">&gt;</span>
+      <span class="k">&lt;h1&gt;</span>I've already built<span class="k">&lt;br&gt;</span>what Sport Alliance<span class="k">&lt;br&gt;</span>is <span class="k">&lt;em</span> class=<span class="s">"accent-ital"</span><span class="k">&gt;</span>building<span class="k">&lt;/em&gt;</span>.<span class="k">&lt;/h1&gt;</span>
+
+      <span class="k">&lt;p</span> class=<span class="s">"standfirst"</span><span class="k">&gt;</span>
+        At Aumovio I architected the company-wide AI operating layer — the
+        Self Service platform that integrates Databricks with our tooling
+        stack, defines the AI usage policy, and enforces governance.
+        <span class="k">&lt;strong&gt;</span>SPA Atlas is the next-scale version of that work.<span class="k">&lt;/strong&gt;</span>
+      <span class="k">&lt;/p&gt;</span>
+
+      <span class="k">&lt;div</span> class=<span class="s">"hero-byline"</span><span class="k">&gt;</span>
+        <span class="k">&lt;span&gt;</span>Raphael Mello<span class="k">&lt;/span&gt;</span>
+        <span class="k">&lt;span</span> class=<span class="s">"sep"</span><span class="k">&gt;</span>·<span class="k">&lt;/span&gt;</span>
+        <span class="k">&lt;a</span> href=<span class="s">"mailto:raphaelppmello@gmail.com"</span><span class="k">&gt;</span>raphaelppmello@gmail.com<span class="k">&lt;/a&gt;</span>
+        <span class="k">&lt;span</span> class=<span class="s">"sep"</span><span class="k">&gt;</span>·<span class="k">&lt;/span&gt;</span>
+        <span class="k">&lt;a</span> href=<span class="s">"https://linkedin.com/in/raphzor"</span><span class="k">&gt;</span>linkedin.com/in/raphzor<span class="k">&lt;/a&gt;</span>
+      <span class="k">&lt;/div&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/header&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="3.1.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Style the hero</div>
+          <div class="lang-label">css — APPEND</div>
+<pre class="code"><span class="k">.hero</span> { <span class="v">padding</span>: <span class="n">88px 0 56px</span>; }
+
+<span class="k">.hero-meta</span> { <span class="v">padding-top</span>: <span class="n">10px</span>; }
+
+<span class="k">.hero-meta .dateline</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-size</span>: <span class="n">0.95rem</span>;
+  <span class="v">line-height</span>: <span class="n">1.45</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">max-width</span>: <span class="s">none</span>;
+}
+<span class="k">.hero-meta .dateline.subdued</span> {
+  <span class="v">color</span>: <span class="s">var(--ink-3)</span>;
+  <span class="v">margin-top</span>: <span class="n">10px</span>;
+  <span class="v">font-size</span>: <span class="n">0.85rem</span>;
+}
+<span class="k">.hero-meta .dateline strong</span> { <span class="v">font-style</span>: <span class="s">normal</span>; <span class="v">font-weight</span>: <span class="n">600</span>; }
+
+<span class="k">.hero-claim h1 .accent-ital</span> {
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">color</span>: <span class="s">var(--accent)</span>;     <span class="c">/* the only accent on the hero */</span>
+}
+
+<span class="k">.standfirst</span> {
+  <span class="v">font-size</span>: <span class="s">var(--fs-pull)</span>;
+  <span class="v">line-height</span>: <span class="n">1.35</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">max-width</span>: <span class="n">28ch</span>;
+  <span class="v">margin-top</span>: <span class="n">36px</span>;
+}
+<span class="k">.standfirst strong</span> {
+  <span class="v">font-weight</span>: <span class="n">500</span>;
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">box-shadow</span>: <span class="s">inset 0 -0.4em 0 rgba(160,43,31,0.15)</span>;
+}
+
+<span class="k">.hero-byline</span> {
+  <span class="v">display</span>: <span class="s">flex</span>;
+  <span class="v">flex-wrap</span>: <span class="s">wrap</span>;
+  <span class="v">gap</span>: <span class="n">8px</span>;
+  <span class="v">align-items</span>: <span class="s">center</span>;
+  <span class="v">margin-top</span>: <span class="n">36px</span>;
+  <span class="v">padding-top</span>: <span class="n">16px</span>;
+  <span class="v">border-top</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+  <span class="v">font-size</span>: <span class="n">0.95rem</span>;
+}
+<span class="k">.hero-byline .sep</span> { <span class="v">color</span>: <span class="s">var(--ink-3)</span>; }
+<span class="k">.hero-byline span:first-child</span> { <span class="v">font-weight</span>: <span class="n">600</span>; }</pre>
+          <p class="expected">Reload. The hero now reads as an editorial cover note: a margin "№ 01" + dateline on the left, a confident headline + standfirst + byline on the right. No emoji, no pills, no glow. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 3.2 -->
+  <details class="task" open>
+    <summary><span class="num-chip p3">3.2</span> Verify hero in browser, screenshot, commit</summary>
+    <div class="task-body">
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="3.2.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Visual verification</div>
+          <p>Reload. Confirm in the browser:</p>
+          <ul style="color:var(--muted); padding-left: 22px; font-size: 13px;">
+            <li>Headline reads <strong>"I've already built what Sport Alliance is building."</strong> with "building" in oxblood italic.</li>
+            <li>Left margin column shows "№ 01" + the dateline.</li>
+            <li>Standfirst is below the headline, max ~28ch wide, with "SPA Atlas is the next-scale…" subtly highlighted.</li>
+            <li>No emoji, no monospace, no glow anywhere.</li>
+            <li>Resize to mobile (≤720px): meta column stacks above the claim.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="3.2.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Commit</div>
+          <div class="lang-label">bash</div>
+<pre class="code">git commit -am <span class="s">"rebuild hero as editorial claim (phase 3)"</span></pre>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PHASE 4 — BODY, ATLAS, TIMELINE, FOOTER
+       ═════════════════════════════════════════════════════════════════ -->
+  <div id="phase-4" class="phase-banner p4">
+    <div class="eyebrow">Phase 4 · Amber</div>
+    <h2>Body sections — fit, Atlas pull-quote, timeline, close</h2>
+    <p>Replace the 6-card grid with an asymmetric "fit" layout. Convert the Atlas callout into an editorial pull-quote. Restrain the timeline to a clean two-column dateline format. Fix the duplicated "Languages" heading. Add a clear close + CTA.</p>
+  </div>
+
+  <!-- TASK 4.1 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.1</span> Replace the 6-card grid with the asymmetric "fit" section</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> "Why I fit" section markup + add new CSS for <code>.fit-list</code></div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.1.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Replace the entire "Why I fit" section</div>
+          <p>One <strong>hero proof</strong> at large scale (Claude Platform), two <strong>secondary proofs</strong> at medium (Shipping cadence + GDPR), the rest as a tight inline list.</p>
+          <div class="lang-label">html — REPLACE the &lt;section&gt; that currently holds the 6 cards</div>
+<pre class="code"><span class="k">&lt;section</span> class=<span class="s">"section"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"grid-12"</span><span class="k">&gt;</span>
+    <span class="k">&lt;div</span> class=<span class="s">"col-3"</span><span class="k">&gt;&lt;div</span> class=<span class="s">"eyebrow"</span><span class="k">&gt;</span>The two non-negotiables<span class="k">&lt;/div&gt;&lt;/div&gt;</span>
+
+    <span class="k">&lt;div</span> class=<span class="s">"col-9"</span><span class="k">&gt;</span>
+      <span class="k">&lt;article</span> class=<span class="s">"fit-hero"</span><span class="k">&gt;</span>
+        <span class="k">&lt;span</span> class=<span class="s">"fit-num"</span><span class="k">&gt;</span>01<span class="k">&lt;/span&gt;</span>
+        <span class="k">&lt;h2&gt;</span>Hands-on with the Claude platform — not generic LLM experience.<span class="k">&lt;/h2&gt;</span>
+        <span class="k">&lt;p&gt;</span>I'm actively building production agents with the
+        <span class="k">&lt;strong&gt;</span>Claude SDK, tool use, MCP, and sub-agents<span class="k">&lt;/strong&gt;</span> —
+        the specific platform Sport Alliance is standardising on.<span class="k">&lt;/p&gt;</span>
+      <span class="k">&lt;/article&gt;</span>
+
+      <span class="k">&lt;div</span> class=<span class="s">"fit-pair"</span><span class="k">&gt;</span>
+        <span class="k">&lt;article&gt;</span>
+          <span class="k">&lt;span</span> class=<span class="s">"fit-num"</span><span class="k">&gt;</span>02<span class="k">&lt;/span&gt;</span>
+          <span class="k">&lt;h3&gt;</span>Shipping in 4–6 week cycles.<span class="k">&lt;/h3&gt;</span>
+          <span class="k">&lt;p&gt;</span>Every agentic workflow at Aumovio goes from design to production
+          in short sprints. I can walk through the architecture, the guardrails,
+          and what broke and how I fixed it.<span class="k">&lt;/p&gt;</span>
+        <span class="k">&lt;/article&gt;</span>
+        <span class="k">&lt;article&gt;</span>
+          <span class="k">&lt;span</span> class=<span class="s">"fit-num"</span><span class="k">&gt;</span>03<span class="k">&lt;/span&gt;</span>
+          <span class="k">&lt;h3&gt;</span>GDPR-first, by design.<span class="k">&lt;/h3&gt;</span>
+          <span class="k">&lt;p&gt;</span>I turned GDPR data-handling requirements into practical AI
+          usage policies that colleagues actually follow — not a compliance
+          deck, a working operating model.<span class="k">&lt;/p&gt;</span>
+        <span class="k">&lt;/article&gt;</span>
+      <span class="k">&lt;/div&gt;</span>
+
+      <span class="k">&lt;dl</span> class=<span class="s">"fit-list"</span><span class="k">&gt;</span>
+        <span class="k">&lt;dt&gt;</span>Enterprise rollout<span class="k">&lt;/dt&gt;</span>
+        <span class="k">&lt;dd&gt;</span>Cross-functional AI enablement at Aumovio; global tool rollouts at Continental across 50+ plants.<span class="k">&lt;/dd&gt;</span>
+
+        <span class="k">&lt;dt&gt;</span>Data platform<span class="k">&lt;/dt&gt;</span>
+        <span class="k">&lt;dd&gt;</span>Designed secure, GDPR-compliant Databricks environments for AI workloads — the same problem shape as governing AI access to Salesforce, Jira, Zendesk, Slack.<span class="k">&lt;/dd&gt;</span>
+
+        <span class="k">&lt;dt&gt;</span>DACH context<span class="k">&lt;/dt&gt;</span>
+        <span class="k">&lt;dd&gt;</span>Living and working in Germany. English &amp; Portuguese native, Spanish professional, German actively improving.<span class="k">&lt;/dd&gt;</span>
+      <span class="k">&lt;/dl&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/section&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.1.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Style the asymmetric fit section</div>
+          <div class="lang-label">css — APPEND, and DELETE the old <code>.signals</code> / <code>.card</code> rules</div>
+<pre class="code"><span class="c">/* drop-cap-style sequence numbers */</span>
+<span class="k">.fit-num</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">font-size</span>: <span class="n">1.6rem</span>;
+  <span class="v">color</span>: <span class="s">var(--accent)</span>;
+  <span class="v">margin-right</span>: <span class="n">10px</span>;
+  <span class="v">vertical-align</span>: <span class="s">baseline</span>;
+}
+
+<span class="k">.fit-hero h2</span> { <span class="v">max-width</span>: <span class="n">22ch</span>; <span class="v">margin-bottom</span>: <span class="n">14px</span>; }
+<span class="k">.fit-hero p</span>  { <span class="v">max-width</span>: <span class="n">52ch</span>; <span class="v">color</span>: <span class="s">var(--ink-2)</span>; }
+
+<span class="k">.fit-pair</span> {
+  <span class="v">display</span>: <span class="s">grid</span>;
+  <span class="v">grid-template-columns</span>: <span class="s">1fr 1fr</span>;
+  <span class="v">gap</span>: <span class="n">36px</span>;
+  <span class="v">margin</span>: <span class="n">52px 0</span>;
+  <span class="v">padding-top</span>: <span class="n">28px</span>;
+  <span class="v">border-top</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+}
+<span class="k">.fit-pair h3</span> { <span class="v">margin-bottom</span>: <span class="n">10px</span>; }
+<span class="k">.fit-pair p</span>  { <span class="v">color</span>: <span class="s">var(--ink-2)</span>; <span class="v">font-size</span>: <span class="n">0.96rem</span>; }
+<span class="k">@media (max-width: 720px)</span> { <span class="k">.fit-pair</span> { <span class="v">grid-template-columns</span>: <span class="s">1fr</span>; } }
+
+<span class="c">/* the tight inline list */</span>
+<span class="k">.fit-list</span> {
+  <span class="v">display</span>: <span class="s">grid</span>;
+  <span class="v">grid-template-columns</span>: <span class="n">160px 1fr</span>;
+  <span class="v">column-gap</span>: <span class="n">28px</span>;
+  <span class="v">row-gap</span>: <span class="n">14px</span>;
+  <span class="v">padding-top</span>: <span class="n">28px</span>;
+  <span class="v">border-top</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+}
+<span class="k">.fit-list dt</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">font-size</span>: <span class="n">0.95rem</span>;
+}
+<span class="k">.fit-list dd</span> { <span class="v">color</span>: <span class="s">var(--ink-2)</span>; <span class="v">font-size</span>: <span class="n">0.95rem</span>; }
+<span class="k">@media (max-width: 720px)</span> { <span class="k">.fit-list</span> { <span class="v">grid-template-columns</span>: <span class="s">1fr</span>; } <span class="k">.fit-list dd</span> { <span class="v">margin-bottom</span>: <span class="n">10px</span>; } }</pre>
+          <p>Now scroll up the CSS and <strong>delete</strong> the old <code>.signals</code>, <code>.card</code>, <code>.card:hover</code>, <code>.card-icon</code>, <code>.card-title</code>, <code>.card-body</code> rules. They no longer have markup.</p>
+          <p class="expected">Reload. The "Why I fit" section is now a hero proof + two secondaries + a 3-row glossary. Hierarchy is obvious. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 4.2 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.2</span> Convert Atlas callout into an editorial pull-quote</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> Atlas section markup + replace <code>.atlas-callout</code> styles</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.2.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Replace the Atlas section</div>
+          <div class="lang-label">html — REPLACE the entire Atlas &lt;section&gt;</div>
+<pre class="code"><span class="k">&lt;section</span> class=<span class="s">"section atlas-section"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"grid-12"</span><span class="k">&gt;</span>
+    <span class="k">&lt;div</span> class=<span class="s">"col-3"</span><span class="k">&gt;&lt;div</span> class=<span class="s">"eyebrow"</span><span class="k">&gt;</span>On SPA Atlas<span class="k">&lt;/div&gt;&lt;/div&gt;</span>
+    <span class="k">&lt;blockquote</span> class=<span class="s">"col-9 atlas-quote"</span><span class="k">&gt;</span>
+      <span class="k">&lt;p</span> class=<span class="s">"atlas-lede"</span><span class="k">&gt;</span>
+        I've architected the smaller version of this — a company-wide Self
+        Service platform that sits as the AI operating layer over our data
+        and tooling stack: <span class="k">&lt;em&gt;</span>controlling access, enforcing policy, enabling
+        teams to work with AI safely.<span class="k">&lt;/em&gt;</span>
+      <span class="k">&lt;/p&gt;</span>
+      <span class="k">&lt;p</span> class=<span class="s">"atlas-body"</span><span class="k">&gt;</span>
+        The architecture problem is the same as Atlas: a single control plane
+        that connects disparate systems, applies governance uniformly, and is
+        usable by non-engineers. I'd bring that blueprint — and what I learned
+        breaking and fixing it — to Sport Alliance from day one.
+      <span class="k">&lt;/p&gt;</span>
+    <span class="k">&lt;/blockquote&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/section&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.2.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Style the pull-quote</div>
+          <div class="lang-label">css — APPEND, and DELETE the old <code>.atlas-callout</code> + <code>::after</code> rules</div>
+<pre class="code"><span class="k">.atlas-section</span> { <span class="v">background</span>: <span class="s">var(--paper-2)</span>; <span class="v">padding</span>: <span class="n">88px 0</span>; }
+<span class="k">.atlas-section .wrap</span>, <span class="k">.atlas-section</span> &gt; <span class="k">.grid-12</span> { <span class="v">max-width</span>: <span class="n">1080px</span>; <span class="v">margin</span>: <span class="s">0 auto</span>; <span class="v">padding</span>: <span class="n">0 32px</span>; }
+
+<span class="k">.atlas-quote</span> {
+  <span class="v">border-left</span>: <span class="n">2px</span> <span class="s">solid var(--accent)</span>;
+  <span class="v">padding-left</span>: <span class="n">28px</span>;
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+}
+<span class="k">.atlas-lede</span> {
+  <span class="v">font-size</span>: <span class="s">var(--fs-pull)</span>;
+  <span class="v">line-height</span>: <span class="n">1.3</span>;
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">max-width</span>: <span class="n">38ch</span>;
+}
+<span class="k">.atlas-lede em</span> { <span class="v">font-style</span>: <span class="s">italic</span>; <span class="v">color</span>: <span class="s">var(--accent)</span>; }
+<span class="k">.atlas-body</span> {
+  <span class="v">font-family</span>: <span class="s">var(--body)</span>;
+  <span class="v">font-size</span>: <span class="n">1rem</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">margin-top</span>: <span class="n">22px</span>;
+  <span class="v">max-width</span>: <span class="n">52ch</span>;
+}</pre>
+          <p>The Atlas section now sits in a slightly deeper paper tone, with the lede in serif-italic and a thin oxblood rule on the left. <strong>This is the page's emotional peak</strong> — the only place the accent appears at scale. Don't add it elsewhere.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 4.3 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.3</span> Restrain the experience timeline</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> <code>.timeline</code> / <code>.job</code> CSS — drop the tag-chip noise</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.3.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Replace the timeline CSS</div>
+          <div class="lang-label">css — REPLACE the .timeline / .job / .tag-chip blocks</div>
+<pre class="code"><span class="k">.timeline</span> { <span class="v">display</span>: <span class="s">flex</span>; <span class="v">flex-direction</span>: <span class="s">column</span>; }
+
+<span class="k">.job</span> {
+  <span class="v">display</span>: <span class="s">grid</span>;
+  <span class="v">grid-template-columns</span>: <span class="n">160px 1fr</span>;
+  <span class="v">column-gap</span>: <span class="n">28px</span>;
+  <span class="v">padding</span>: <span class="n">32px 0</span>;
+  <span class="v">border-bottom</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+}
+<span class="k">.job:last-child</span> { <span class="v">border-bottom</span>: <span class="s">none</span>; }
+
+<span class="k">.job-period</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-3)</span>;
+  <span class="v">font-size</span>: <span class="n">0.9rem</span>;
+}
+<span class="k">.job-company</span> {
+  <span class="v">font-size</span>: <span class="n">0.85rem</span>;
+  <span class="v">letter-spacing</span>: <span class="n">0.1em</span>;
+  <span class="v">text-transform</span>: <span class="s">uppercase</span>;
+  <span class="v">color</span>: <span class="s">var(--ink)</span>;
+  <span class="v">margin-top</span>: <span class="n">4px</span>;
+  <span class="v">font-weight</span>: <span class="n">600</span>;
+}
+<span class="k">.job-title</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-size</span>: <span class="n">1.35rem</span>;
+  <span class="v">font-weight</span>: <span class="n">400</span>;
+  <span class="v">letter-spacing</span>: <span class="n">-0.012em</span>;
+  <span class="v">margin-bottom</span>: <span class="n">10px</span>;
+}
+<span class="k">.job-desc</span> { <span class="v">color</span>: <span class="s">var(--ink-2)</span>; <span class="v">font-size</span>: <span class="n">0.96rem</span>; <span class="v">max-width</span>: <span class="n">62ch</span>; }
+<span class="k">.job-desc strong</span> { <span class="v">color</span>: <span class="s">var(--ink)</span>; <span class="v">font-weight</span>: <span class="n">600</span>; }
+
+<span class="c">/* keywords inline, not chip-styled */</span>
+<span class="k">.tags</span> {
+  <span class="v">margin-top</span>: <span class="n">14px</span>;
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-size</span>: <span class="n">0.9rem</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-3)</span>;
+}
+<span class="k">.tag-chip</span> { <span class="v">all</span>: <span class="s">unset</span>; }
+<span class="k">.tag-chip + .tag-chip</span>::before { <span class="v">content</span>: <span class="s">' · '</span>; <span class="v">color</span>: <span class="s">var(--rule)</span>; }
+<span class="k">@media (max-width: 720px)</span> { <span class="k">.job</span> { <span class="v">grid-template-columns</span>: <span class="s">1fr</span>; } }</pre>
+          <p>The chip styling is gone. Tags become a single inline italic line: <em>Claude SDK · MCP · Sub-agents · Databricks · AWS · GDPR policy · TypeScript · Python · Vue</em>. Reads like a magazine credit line.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.3.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Wrap the timeline in the 12-col grid</div>
+          <p>In markup, change the experience section's outer wrapper:</p>
+          <div class="lang-label">html — REPLACE the .section wrapper for Experience</div>
+<pre class="code"><span class="k">&lt;section</span> class=<span class="s">"section"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"grid-12"</span><span class="k">&gt;</span>
+    <span class="k">&lt;div</span> class=<span class="s">"col-3"</span><span class="k">&gt;&lt;div</span> class=<span class="s">"eyebrow"</span><span class="k">&gt;</span>Experience<span class="k">&lt;/div&gt;&lt;/div&gt;</span>
+    <span class="k">&lt;div</span> class=<span class="s">"col-9 timeline"</span><span class="k">&gt;</span>
+      <span class="c">&lt;!-- existing four .job entries, unchanged markup --&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/section&gt;</span></pre>
+          <p>The four <code>.job</code> blocks stay as-is — only their wrapper and styling change.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 4.4 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.4</span> Stack section — fix duplicated "Languages" + restrain styling</summary>
+    <div class="task-body">
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.4.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Rename the second "Languages" group to "Spoken"</div>
+          <p>In the stack-grid markup, find the second <code>&lt;div class="stack-group-title"&gt;Languages&lt;/div&gt;</code> (the one listing English / Portuguese / Spanish / German). Change its title to <strong>Spoken</strong>. Keep the first one ("Languages" for TypeScript/Python/Node.js) — it refers to programming languages.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.4.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Replace the stack section CSS</div>
+          <div class="lang-label">css — REPLACE the .stack-* blocks</div>
+<pre class="code"><span class="k">.stack-grid</span> {
+  <span class="v">display</span>: <span class="s">grid</span>;
+  <span class="v">grid-template-columns</span>: <span class="s">repeat(3, 1fr)</span>;
+  <span class="v">column-gap</span>: <span class="n">28px</span>;
+  <span class="v">row-gap</span>: <span class="n">36px</span>;
+}
+<span class="k">@media (max-width: 720px)</span> { <span class="k">.stack-grid</span> { <span class="v">grid-template-columns</span>: <span class="s">1fr 1fr</span>; } }
+<span class="k">@media (max-width: 480px)</span> { <span class="k">.stack-grid</span> { <span class="v">grid-template-columns</span>: <span class="s">1fr</span>; } }
+
+<span class="k">.stack-group</span> { <span class="v">background</span>: <span class="s">none</span>; <span class="v">border</span>: <span class="s">none</span>; <span class="v">border-radius</span>: <span class="n">0</span>; <span class="v">padding</span>: <span class="n">0</span>; }
+<span class="k">.stack-group-title</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">font-size</span>: <span class="n">1rem</span>;
+  <span class="v">color</span>: <span class="s">var(--accent)</span>;
+  <span class="v">letter-spacing</span>: <span class="s">normal</span>;
+  <span class="v">text-transform</span>: <span class="s">none</span>;
+  <span class="v">margin-bottom</span>: <span class="n">8px</span>;
+  <span class="v">padding-bottom</span>: <span class="n">6px</span>;
+  <span class="v">border-bottom</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+}
+<span class="k">.stack-items</span> {
+  <span class="v">font-family</span>: <span class="s">var(--body)</span>;
+  <span class="v">font-size</span>: <span class="n">0.95rem</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">line-height</span>: <span class="n">1.7</span>;
+}
+<span class="k">.stack-items span</span> { <span class="v">color</span>: <span class="s">var(--ink)</span>; <span class="v">font-weight</span>: <span class="n">500</span>; }</pre>
+          <p>Wrap the section in <code>grid-12</code> with a <code>col-3</code> eyebrow and <code>col-9</code> for the stack-grid, matching the rest of the body.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 4.5 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.5</span> Add a clear close + CTA, rebuild the footer</summary>
+    <div class="task-body">
+      <div class="files">
+        <div class="header">Files</div>
+        <div class="row"><span class="mod">~ modified</span> <code>&lt;footer&gt;</code> markup + add <code>.close</code> section above it</div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.5.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Add the close section and rebuild the footer</div>
+          <div class="lang-label">html — REPLACE the existing &lt;footer&gt; with this</div>
+<pre class="code"><span class="k">&lt;section</span> class=<span class="s">"section close-section"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"grid-12"</span><span class="k">&gt;</span>
+    <span class="k">&lt;div</span> class=<span class="s">"col-12 close"</span><span class="k">&gt;</span>
+      <span class="k">&lt;p</span> class=<span class="s">"close-line"</span><span class="k">&gt;</span>
+        I'd like the chance to walk you through the architecture in person.
+      <span class="k">&lt;/p&gt;</span>
+      <span class="k">&lt;a</span> class=<span class="s">"cta"</span> href=<span class="s">"mailto:raphaelppmello@gmail.com?subject=Sport%20Alliance%20%C2%B7%20AI%20Systems%20Lead"</span><span class="k">&gt;</span>
+        Let's talk →
+      <span class="k">&lt;/a&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/section&gt;</span>
+
+<span class="k">&lt;footer</span> class=<span class="s">"colophon"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> class=<span class="s">"wrap"</span><span class="k">&gt;</span>
+    <span class="k">&lt;span&gt;</span>Raphael Mello<span class="k">&lt;/span&gt;</span>
+    <span class="k">&lt;span&gt;</span>One-off note · Sport Alliance · AI Systems Lead · 2026<span class="k">&lt;/span&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/footer&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.5.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Style the close + colophon</div>
+          <div class="lang-label">css — APPEND, DELETE the old <code>footer</code>/<code>.footer-*</code> rules</div>
+<pre class="code"><span class="k">.close-section</span> { <span class="v">padding</span>: <span class="n">96px 0</span>; <span class="v">text-align</span>: <span class="s">center</span>; }
+<span class="k">.close-line</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">font-weight</span>: <span class="n">300</span>;
+  <span class="v">font-size</span>: <span class="s">var(--fs-pull)</span>;
+  <span class="v">max-width</span>: <span class="n">26ch</span>;
+  <span class="v">margin</span>: <span class="s">0 auto 28px</span>;
+}
+<span class="k">.cta</span> {
+  <span class="v">display</span>: <span class="s">inline-block</span>;
+  <span class="v">font-family</span>: <span class="s">var(--body)</span>;
+  <span class="v">font-size</span>: <span class="n">1rem</span>;
+  <span class="v">font-weight</span>: <span class="n">600</span>;
+  <span class="v">padding</span>: <span class="n">14px 28px</span>;
+  <span class="v">background</span>: <span class="s">var(--ink)</span>;
+  <span class="v">color</span>: <span class="s">var(--paper)</span>;
+  <span class="v">text-decoration</span>: <span class="s">none</span>;
+  <span class="v">border</span>: <span class="n">1px</span> <span class="s">solid var(--ink)</span>;
+  <span class="v">transition</span>: <span class="s">background .2s, color .2s</span>;
+}
+<span class="k">.cta:hover</span> { <span class="v">background</span>: <span class="s">var(--accent)</span>; <span class="v">color</span>: <span class="s">var(--paper)</span>; <span class="v">border-color</span>: <span class="s">var(--accent)</span>; }
+
+<span class="k">.colophon</span> {
+  <span class="v">border-top</span>: <span class="n">1px</span> <span class="s">solid var(--rule)</span>;
+  <span class="v">padding</span>: <span class="n">28px 0</span>;
+  <span class="v">font-size</span>: <span class="n">0.85rem</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-3)</span>;
+}
+<span class="k">.colophon .wrap</span> {
+  <span class="v">display</span>: <span class="s">flex</span>;
+  <span class="v">justify-content</span>: <span class="s">space-between</span>;
+  <span class="v">align-items</span>: <span class="s">baseline</span>;
+  <span class="v">gap</span>: <span class="n">16px</span>;
+}
+<span class="k">.colophon span:first-child</span> {
+  <span class="v">font-family</span>: <span class="s">var(--display)</span>;
+  <span class="v">font-style</span>: <span class="s">italic</span>;
+  <span class="v">color</span>: <span class="s">var(--ink-2)</span>;
+  <span class="v">font-size</span>: <span class="n">1rem</span>;
+}</pre>
+          <p class="expected">Reload. The page closes on a single italic invitation, a solid black CTA, then a thin colophon line. ✓</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- TASK 4.6 -->
+  <details class="task" open>
+    <summary><span class="num-chip p4">4.6</span> Final pass · QA, accessibility, ship</summary>
+    <div class="task-body">
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.6.1" />
+        <div class="step-content">
+          <div class="step-label">Step 1 · Visual QA against the AI-slop checklist</div>
+          <p>Open the page in a clean browser window and confirm <strong>none</strong> of these are present:</p>
+          <ul style="color:var(--muted); padding-left: 22px; font-size: 13px; line-height: 1.8;">
+            <li>Dark mode + cyan/blue glow → <strong>gone</strong> (light paper)</li>
+            <li>Grid noise overlay → <strong>gone</strong></li>
+            <li>Monospace labels → <strong>gone</strong> (only italic display serif for tertiary text)</li>
+            <li>Emoji icons → <strong>gone</strong></li>
+            <li>Identical card grid → <strong>gone</strong> (asymmetric hero+pair+list)</li>
+            <li>Gradient hover top-border → <strong>gone</strong></li>
+            <li>translateY card hover → <strong>gone</strong></li>
+            <li>Big watermark text → <strong>gone</strong></li>
+            <li>Generic font (Inter) → <strong>replaced</strong> (Fraunces + Inter Tight)</li>
+            <li>Tag chips with rgba accent bg → <strong>gone</strong> (italic inline credits)</li>
+            <li>fadeUp page-load animation → <strong>gone</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.6.2" />
+        <div class="step-content">
+          <div class="step-label">Step 2 · Accessibility check</div>
+          <ul style="color:var(--muted); padding-left: 22px; font-size: 13px; line-height: 1.8;">
+            <li>Keyboard-tab through every link — focus ring is visible.</li>
+            <li>Body text contrast: <code>#15110d</code> on <code>#f4f1ea</code> — APCA Lc ≈ 95 — well above readable.</li>
+            <li>Tertiary <code>#7a6f60</code> on paper — keep for caption-only text, never for body.</li>
+            <li>Confirm no information is conveyed by color alone (oxblood is decorative; meaning lives in the words).</li>
+            <li>Resize to 360px viewport — no horizontal scroll, all sections stack cleanly.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.6.3" />
+        <div class="step-content">
+          <div class="step-label">Step 3 · Side-by-side with v0</div>
+          <p>Open <code style="color:#7dd3fc">raphael_mello_sportalliance.v0.html</code> in one tab and the new file in another. Apply the AI-slop test:</p>
+          <div class="callout callout-tip">
+            <strong>Test.</strong> If you showed each tab to a designer and said "AI made one of these," which one would they pick? It must <strong>not</strong> be the new file.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.6.4" />
+        <div class="step-content">
+          <div class="step-label">Step 4 · Final commit</div>
+          <div class="lang-label">bash</div>
+<pre class="code">git commit -am <span class="s">"editorial body, atlas pull-quote, timeline, cta (phase 4)"</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <input type="checkbox" class="step-check" data-id="4.6.5" />
+        <div class="step-content">
+          <div class="step-label">Step 5 · Send</div>
+          <p>The page is one HTML file under ~30 KB with two CDN font URLs. Send it as the link in the application email; or host on Netlify/Cloudflare Pages and link from the resume.</p>
+          <div class="callout callout-info">
+            <strong>Optional polish (not required).</strong> If time permits, replace the section eyebrows with small caps via <code>font-variant: small-caps</code> + Fraunces, and try setting <code>font-feature-settings: "ss01" 1, "ss03" 1</code> on the headline for Fraunces' alternate <em>g</em> and <em>a</em>. Both are lever-pulls that lift the type to magazine-grade.
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ─── DONE ───────────────────────────────────────────────────────────── -->
+  <div class="section-title">Out of scope</div>
+  <ul style="color:var(--muted); padding-left: 22px; font-size: 13px; line-height: 1.8;">
+    <li>Adding a profile photo (typography-only is intentional and more confident).</li>
+    <li>Mood-boards, branding, logo work — single-use page, doesn't earn the time.</li>
+    <li>JavaScript interactions — confidence is shown by restraint here, not interactivity.</li>
+    <li>An alternate dark-mode version — pick one and commit.</li>
+  </ul>
+
+  <div class="section-title">Risks</div>
+  <ul style="color:var(--muted); padding-left: 22px; font-size: 13px; line-height: 1.8;">
+    <li><strong>Light editorial may read "design student" if the type isn't tight.</strong> Mitigation: keep Fraunces at weight 300–400, never 700+; keep the oxblood appearing only at hero italic, fit-num, atlas-quote-rule, fit-list dt, stack-group-title, and CTA hover. That's it.</li>
+    <li><strong>Some readers expect a "tech portfolio" aesthetic.</strong> The point of going editorial is to <em>not</em> meet that expectation. The hiring manager has read 50 dark/cyan portfolios this month. Be the one they remember.</li>
+    <li><strong>Fraunces from Google Fonts can FOUT on first load.</strong> The <code>font-display: swap</code> default keeps text visible; acceptable for a one-shot page.</li>
+  </ul>
+
+</div>
+
+<script>
+  // Persist checkbox state so progress survives reloads
+  const KEY = 'sportalliance-portfolio-redesign-checks';
+  const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+  document.querySelectorAll('input.step-check').forEach(cb => {
+    const id = cb.dataset.id;
+    if (saved[id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      saved[id] = cb.checked;
+      localStorage.setItem(KEY, JSON.stringify(saved));
+    });
+  });
+</script>
+
+</body>
+</html>
